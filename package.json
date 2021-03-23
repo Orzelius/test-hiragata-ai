@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tensorflow/tfjs": "^1.7.4",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -10,9 +11,15 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
+    "@types/recharts": "^1.8.10",
+    "canvas-free-drawing": "^2.0.4",
+    "file-loader": "^6.0.0",
+    "pngjs": "^5.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-json-prettify": "^0.2.0",
     "react-scripts": "3.4.1",
+    "types": "^0.1.1",
     "typescript": "~3.7.2"
   },
   "scripts": {
@@ -35,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^9.0.1"
   }
 }
