@@ -3,27 +3,28 @@ import React, { useState } from 'react';
 import CanvasFreeDrawing from "canvas-free-drawing";
 import * as tf from '@tensorflow/tfjs';
 import { MnistData } from './data';
+import { PROPS } from './const';
 
-const IMAGE_SIZE = 50 * 50;
 const initState = { model: false, canvas: false };
 let model: tf.LayersModel;
 let cfd: CanvasFreeDrawing;
 function App() {
   const [answer, setAnswer] = useState(0);
+  const [showAlph, setShowAlph] = useState(false);
   const sendImg = () => {
     // console.log(state.cfd.save());
     const img = new Image();
     img.onload = (el) => {
-      const datasetBytesBuffer = new ArrayBuffer(IMAGE_SIZE * 4);
+      const datasetBytesBuffer = new ArrayBuffer(PROPS.Size * 4);
       const canvas = document.createElement('canvas');
-      canvas.width = 50;
-      canvas.height = 50;
+      canvas.width = PROPS.W;
+      canvas.height = PROPS.H;
       const ctx = canvas.getContext('2d');
       // img.width and img.height will contain the original dimensions
       if (ctx && el) {
         //draw in canvas
-        ctx.drawImage(img, 0, 0, 50, 50);
-        const datasetBytesView = new Float32Array(datasetBytesBuffer, 0, IMAGE_SIZE);
+        ctx.drawImage(img, 0, 0, PROPS.W, PROPS.H);
+        const datasetBytesView = new Float32Array(datasetBytesBuffer, 0, PROPS.Size);
         const img2: any = document.getElementById('img2')
         if (img2) img2.src = canvas.toDataURL();
         // console.log(canvas.toDataURL());
@@ -38,7 +39,7 @@ function App() {
           const testImage = new Float32Array(datasetBytesBuffer);
           const xs = tf.tensor4d(
             testImage,
-            [1, 50, 50, 1]);
+            [1, PROPS.W, PROPS.H, 1]);
           const output: any = model.predict(xs);
           // const axis = 1;
           const predictions = output.argMax(1).dataSync();
@@ -50,26 +51,6 @@ function App() {
     img.src = cfd.save();
     // console.log(img);
 
-  }
-
-  const testData = () => {
-    const data = new MnistData();
-    data.load().then(async () => {
-      const testData = await data.getTestData();
-      const testResult: any = model.predict(testData.xs);
-      const predictions = Array.from(testResult.argMax(1).dataSync());
-      const labels = Array.from(testData.labels.argMax(1).dataSync());
-      console.log(`Test result: ${predictions}`);
-      console.log(`Labels: ${labels}`);
-      let correct = 0;
-      for (let i = 0; i < predictions.length; i++) {
-        const prediction = predictions[i];
-        if (prediction === labels[i]) correct++;
-      }
-      console.log(`Correct ${correct}/${predictions.length}`);
-      console.log(`Correct %  ${correct / predictions.length}`);
-
-    })
   }
 
   const undo = () => {
@@ -110,20 +91,29 @@ function App() {
 
   return (
     <div >
-      <header >
-        <div >
-          <button onClick={clear}>Clear</button>
-          <button onClick={undo}>Undo</button>
+      {showAlph && <div style={{ overflowX: "scroll", fontSize: "3em", width: "100%" }}>{PROPS.classes.map(c => c.kat)}</div>}
+      <button onClick={() => setShowAlph(!showAlph)}>{showAlph ? "Hide letters" : "Show all letters"}</button>
+      <div >
+        <div style={{ display: "inline-block", margin: "2em" }}>
+          Draw here: <br />
+          <canvas id="cfd" style={{ border: "solid 1px black" }}></canvas>
         </div>
-        <h2>Answer: {answer}</h2>
-        <div >
-          <canvas id="cfd" style={{ border: "solid 1px black", display: "inline-block", margin: "2em" }}></canvas>
-          <img id="img2" style={{ border: "solid 1px black", display: "inline-block", margin: "2em", width: 350, height: 350 }}></img>
-          <img id="img3" src="./out.png" style={{ border: "solid 1px black", display: "inline-block", margin: "2em", width: 350, height: 350 }}></img>
+        <div style={{ display: "inline-block", margin: "2em", }}>
+          Input to the AI ({PROPS.W}x{PROPS.H})px: <br />
+          <img id="img2" style={{ border: "solid 1px black", width: 350, height: 350 }}></img>
         </div>
-        <button onClick={sendImg}>{loading ? "Loading" : "Get answer"}</button>
-        <button onClick={testData}>Test Data</button>
-      </header>
+        <div style={{ display: "inline-block", margin: "2em" }}>
+          Example of what the AI was trained on: <br />
+          <img id="img3" src="./out.png" style={{ border: "solid 1px black", display: "inline-block", width: 350, height: 350 }}></img>
+        </div>
+      </div>
+      <div >
+        <button onClick={clear}>Clear</button>
+        <button onClick={undo}>Undo</button>
+      </div>
+      <br />
+      <button onClick={sendImg}>{loading ? "Loading" : "Get answer"}</button>
+      <h2>Answer: {PROPS.classes[answer].kat}</h2>
     </div>
   );
 }
