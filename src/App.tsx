@@ -10,7 +10,7 @@ let model: tf.LayersModel;
 let cfd: CanvasFreeDrawing;
 function App() {
   const [answer, setAnswer] = useState(0);
-  const [showAlph, setShowAlph] = useState(false);
+  const [showAlph, setShowAlph] = useState(true);
   const sendImg = () => {
     // console.log(state.cfd.save());
     const img = new Image();
