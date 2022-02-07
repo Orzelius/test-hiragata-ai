@@ -9,7 +9,7 @@ const initState = { model: false, canvas: false };
 let model: tf.LayersModel;
 let cfd: CanvasFreeDrawing;
 function App() {
-  const [answer, setAnswer] = useState(0);
+  const [answer, setAnswer] = useState<number | null>(null);
   const [showAlph, setShowAlph] = useState(true);
   const sendImg = () => {
     // console.log(state.cfd.save());
@@ -113,7 +113,7 @@ function App() {
       </div>
       <br />
       <button onClick={sendImg}>{loading ? "Loading" : "Get answer"}</button>
-      <h2>Answer: {PROPS.classes[answer].kat}</h2>
+      <h2>Answer: {answer && PROPS.classes[answer].kat}</h2>
     </div>
   );
 }
